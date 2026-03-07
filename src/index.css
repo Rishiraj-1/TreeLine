@@ -1,0 +1,263 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: #00ff88;
+  --color-brand-secondary: #00b8ff;
+  --color-bg-base: #030706;
+  --color-bg-surface: #0a110e;
+  --color-bg-elevated: #111c17;
+  --color-text-main: #f0fdf4;
+  --color-text-muted: #94a3b8;
+
+  --font-sans: 'Outfit', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: var(--color-bg-base);
+    color: var(--color-text-main);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(circle at 15% 50%, rgba(0, 255, 136, 0.03), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(0, 184, 255, 0.03), transparent 25%);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: rgba(0, 255, 136, 0.2);
+    color: #fff;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 255, 136, 0.2);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 136, 0.5);
+  }
+}
+
+@layer components {
+
+  /* Ultra Premium Glassmorphism */
+  .neo-glass {
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.03) 0%,
+        rgba(255, 255, 255, 0.01) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    border-radius: 24px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .neo-glass:hover {
+    border-color: rgba(0, 255, 136, 0.15);
+    box-shadow:
+      0 8px 32px 0 rgba(0, 0, 0, 0.4),
+      0 0 20px 0 rgba(0, 255, 136, 0.05);
+    transform: translateY(-2px);
+  }
+
+  /* Futuristic Buttons */
+  .neo-btn {
+    position: relative;
+    background: transparent;
+    color: #fff;
+    font-weight: 600;
+    padding: 1rem 2.5rem;
+    border-radius: 100px;
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    z-index: 1;
+  }
+
+  .neo-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #00ff88, #00b8ff);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+  }
+
+  .neo-btn:hover::before {
+    width: 100%;
+  }
+
+  .neo-btn:hover {
+    border-color: transparent;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
+    transform: scale(1.02);
+    color: #000;
+  }
+
+  .neo-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* Insane Input Fields */
+  .neo-input {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    color: #fff;
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .neo-input:focus {
+    outline: none;
+    border-color: #00ff88;
+    background: rgba(0, 255, 136, 0.02);
+    box-shadow:
+      inset 0 2px 4px rgba(0, 0, 0, 0.2),
+      0 0 0 2px rgba(0, 255, 136, 0.1);
+  }
+
+  .neo-input::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Micro-animations */
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+
+    0%,
+    100% {
+      box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+    }
+
+    50% {
+      box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+    }
+  }
+
+  .neo-glow {
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+
+  /* Text Gradients */
+  .text-gradient {
+    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-brand {
+    background: linear-gradient(135deg, #00ff88 0%, #00b8ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Stats Container */
+  .neo-stat {
+    position: relative;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+  }
+
+  .neo-stat::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0%;
+    background: #00ff88;
+    transition: height 0.3s ease;
+  }
+
+  .neo-stat:hover {
+    background: rgba(0, 255, 136, 0.03);
+  }
+
+  .neo-stat:hover::before {
+    height: 70%;
+  }
+
+  /* Animations */
+  @keyframes revealUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.98);
+      filter: blur(5px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  .reveal-up {
+    animation: revealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

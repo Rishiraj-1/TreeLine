@@ -116,8 +116,8 @@ export default function Leaderboard() {
                     <Database size={16} className="text-[#00ff88]" /> Array Visualization
                 </h3>
 
-                <div className="h-[400px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
+                <div className="h-[400px] w-full mt-4">
+                    <ResponsiveContainer width="100%" height={400} minHeight={300}>
                         <BarChart data={filteredData} margin={{ top: 20, right: 20, bottom: 90, left: 30 }}>
                             <CartesianGrid strokeDasharray="2 4" stroke="rgba(255,255,255,0.05)" vertical={false} />
                             <XAxis

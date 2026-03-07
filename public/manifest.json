@@ -1,0 +1,34 @@
+{
+    "manifest_version": 3,
+    "name": "PromptPrint AI Tracker",
+    "version": "1.0",
+    "description": "Auto detects tokens from AI tools like ChatGPT, Gemini, and Claude and calculates carbon footprint.",
+    "action": {
+        "default_popup": "index.html"
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://chatgpt.com/*",
+                "https://gemini.google.com/*",
+                "https://claude.ai/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ],
+    "permissions": [
+        "storage",
+        "activeTab",
+        "scripting"
+    ],
+    "host_permissions": [
+        "https://chatgpt.com/*",
+        "https://gemini.google.com/*",
+        "https://claude.ai/*"
+    ]
+}

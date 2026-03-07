@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
@@ -36,6 +36,50 @@ export default function Home() {
     const [comparisonData, setComparisonData] = useState(null);
     const [session, setSession] = useState({ count: 0, totalCO2: 0, totalEnergy: 0 });
     const [animKey, setAnimKey] = useState(0);
+    const [extensionStats, setExtensionStats] = useState(null);
+
+    // Fetch live draft prompt from the active tab when popup opens
+    useEffect(() => {
+        if (typeof chrome !== 'undefined' && chrome.tabs) {
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                const tab = tabs[0];
+                if (tab) {
+                    chrome.tabs.sendMessage(tab.id, { type: 'GET_CURRENT_INPUT' }, (response) => {
+                        if (chrome.runtime.lastError) {
+                            // Content script might not be injected on this page (e.g. not an AI tool)
+                            console.log("Not an active AI chat page or script not loaded.");
+                        } else if (response && response.text) {
+                            setPrompt(response.text.trim());
+
+                            // Try to guess default model based on the URL the user is currently on!
+                            if (tab.url.includes('chatgpt.com')) setSelectedModel('GPT-5.0 Turbo');
+                            if (tab.url.includes('claude.ai')) setSelectedModel('Claude 4.6 Sonnet');
+                            if (tab.url.includes('gemini.google.com')) setSelectedModel('Gemini 2.5 Pro');
+                        }
+                    });
+                }
+            });
+        }
+    }, []);
+
+    useEffect(() => {
+        if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+            chrome.storage.local.get(['totalTokens', 'history'], (result) => {
+                if (result.totalTokens) {
+                    setExtensionStats(result);
+                }
+            });
+
+            // Listen for updates
+            const listener = (changes, namespace) => {
+                if (namespace === 'local' && changes.totalTokens) {
+                    chrome.storage.local.get(['totalTokens', 'history'], (res) => setExtensionStats(res));
+                }
+            };
+            chrome.storage.onChanged.addListener(listener);
+            return () => chrome.storage.onChanged.removeListener(listener);
+        }
+    }, []);
 
     const handleCalculate = () => {
         if (!prompt.trim()) return;
@@ -80,6 +124,25 @@ export default function Home() {
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#00ff88]/30 bg-[#00ff88]/5 text-[#00ff88] text-xs font-bold uppercase tracking-widest mb-6">
                     <Activity size={14} className="animate-pulse" /> Live Telemetry
                 </div>
+
+                {extensionStats && (
+                    <div className="mb-6 flex justify-center reveal-up">
+                        <div className="neo-glass px-6 py-4 rounded-2xl flex gap-8 items-center border border-[#00ff88]/50 bg-[#00ff88]/10 shadow-[0_0_20px_rgba(0,255,136,0.15)]">
+                            <div>
+                                <span className="text-[#94a3b8] block text-[10px] uppercase font-bold tracking-widest mb-1">Live Tracked Tokens</span>
+                                <span className="font-mono text-white text-xl">{extensionStats.totalTokens.toLocaleString()}</span>
+                            </div>
+                            <div className="h-8 w-px bg-white/10"></div>
+                            <div>
+                                <span className="text-[#00ff88] block text-[10px] uppercase font-bold tracking-widest mb-1">Live Est. Emissions</span>
+                                <span className="font-mono text-[#00ff88] text-xl drop-shadow-[0_0_5px_rgba(0,255,136,0.5)]">
+                                    {fmt((extensionStats.totalTokens / 1000) * 0.004 * 0.386, 4)}g CO₂
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter mb-6">
                     Calculate <span className="text-gradient">AI Scale</span><br />
                     Optimize <span className="text-gradient-brand">Emissions.</span>
@@ -259,8 +322,8 @@ export default function Home() {
                                     <Activity size={16} className="text-[#00ff88]" /> Topology vs Carbon (gCO₂)
                                 </h3>
                             </div>
-                            <div className="h-[300px] w-full">
-                                <ResponsiveContainer width="100%" height="100%">
+                            <div className="h-[300px] w-full mt-4">
+                                <ResponsiveContainer width="100%" height={300} minHeight={200}>
                                     <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 40 }}>
                                         <defs>
                                             <linearGradient id="colorCo2" x1="0" y1="0" x2="0" y2="1">

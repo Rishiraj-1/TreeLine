@@ -1,10 +1,8 @@
 import { CO2_PER_WH } from './models';
 
-// Assuming out tokens are about 1.5x of in tokens for a typical generative usecase to allow mixed logic
 export function estimateTokens(text) {
-    const inTokens = Math.max(1, Math.ceil(text.length / 4));
-    const outTokens = Math.ceil(inTokens * 1.5);
-    return { inTokens, outTokens, total: inTokens + outTokens };
+    if (!text) return 0;
+    return Math.max(1, Math.ceil(text.length / 4));
 }
 
 export function calcEnergy(totalTokens, whPer1k) {
